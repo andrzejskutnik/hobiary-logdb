@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NativeBuildDirectory Condition="'$(NativeBuildDirectory)' == ''">$(MSBuildThisFileDirectory)..\..\build\</NativeBuildDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\tests\HobiaryLogDB.Tests\HobiaryLogClient.cs" Link="HobiaryLogClient.cs" />
+    <Compile Include="..\..\tests\HobiaryLogDB.Tests\NativeHLog.cs" Link="NativeHLog.cs" />
+    <Content Include="$(NativeBuildDirectory)hobiarylogdb.dll" Condition="Exists('$(NativeBuildDirectory)hobiarylogdb.dll')" CopyToOutputDirectory="PreserveNewest" Link="hobiarylogdb.dll" />
+    <Content Include="$(NativeBuildDirectory)libhobiarylogdb.so" Condition="Exists('$(NativeBuildDirectory)libhobiarylogdb.so')" CopyToOutputDirectory="PreserveNewest" Link="libhobiarylogdb.so" />
+  </ItemGroup>
+  <Target Name="CheckNativeLibrary" BeforeTargets="Build"
+          Condition="!Exists('$(NativeBuildDirectory)hobiarylogdb.dll') And !Exists('$(NativeBuildDirectory)libhobiarylogdb.so')">
+    <Error Text="Build HobiaryLogDB with CMake first, or set NativeBuildDirectory to the directory containing its native library." />
+  </Target>
+</Project>

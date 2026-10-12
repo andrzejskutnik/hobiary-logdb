@@ -1,0 +1,14 @@
+# Build artefakty .NET
+bin/
+obj/
+
+# Build artefakty C
+build/
+
+# NuGet
+*.nupkg
+
+# VS/Rider
+.vs/
+.idea/
+*.user

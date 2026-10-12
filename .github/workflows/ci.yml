@@ -1,0 +1,16 @@
+name: Build, test and demo
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build
+      - run: dotnet test tests/HobiaryLogDB.Tests/HobiaryLogDB.Tests.csproj
+      - run: dotnet run --project samples/LogDemo/LogDemo.csproj
