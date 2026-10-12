@@ -111,6 +111,30 @@ public class HlogTests : IDisposable
     /* ── Rotacja segmentów ───────────────────────────────────────────────── */
 
     [Fact]
+    public void Reopen_IgnoresIndexAndBackupFilesDuringSegmentDiscovery()
+    {
+        var log = NativeHLogFacade.hlog_open(_dir, 0);
+        Assert.NotEqual(IntPtr.Zero, log);
+        NativeHLogFacade.hlog_close(log);
+        File.WriteAllText(Path.Combine(_dir, "hlog_999999.hidx_time"), "not a segment");
+        File.WriteAllText(Path.Combine(_dir, "hlog_000001.hlog.backup"), "not a segment");
+        File.WriteAllText(Path.Combine(_dir, "hlog_999998.txt"), "not a segment");
+
+        log = NativeHLogFacade.hlog_open(_dir, 0);
+        Assert.NotEqual(IntPtr.Zero, log);
+        try
+        {
+            Assert.Equal(1u, NativeHLogFacade.hlog_segment_count(log));
+            Assert.Equal(1UL, NativeHLogFacade.hlog_active_seq(log));
+            Assert.Equal(0UL, NativeHLogFacade.hlog_active_record_count(log));
+        }
+        finally
+        {
+            NativeHLogFacade.hlog_close(log);
+        }
+    }
+
+    [Fact]
     public void AutoRotation_CreatesNewSegment()
     {
         /* max_segment_bytes = 5000 — przy typowym rekordzie (~84B bez payload)

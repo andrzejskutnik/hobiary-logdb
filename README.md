@@ -1,5 +1,8 @@
 # HobiaryLogDB
 
+Segment discovery requires the complete `.hlog` filename suffix; index files
+and backups are not counted as segments (covered by a reopen regression test).
+
 Experimental append-only log storage engine written in **C11**, with segmented
 files, secondary indexes, retention and a C# P/Invoke wrapper. This is a
 portfolio project, not a production durability guarantee.

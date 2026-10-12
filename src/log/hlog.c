@@ -121,7 +121,9 @@ static void scan_segments(Hlog *log)
     do
     {
         unsigned long long seq_ull = 0;
-        if (sscanf(fd.cFileName, "hlog_%llu.hlog", &seq_ull) == 1)
+        int name_end = 0;
+        if (sscanf(fd.cFileName, "hlog_%llu.hlog%n", &seq_ull, &name_end) == 1 &&
+            name_end > 0 && fd.cFileName[name_end] == '\0')
         {
             if (log->seg_count < HLOG_MAX_SEGS)
                 log->seqs[log->seg_count++] = (uint64_t)seq_ull;
@@ -136,7 +138,9 @@ static void scan_segments(Hlog *log)
     while ((e = readdir(d)) != NULL)
     {
         unsigned long long seq_ull = 0;
-        if (sscanf(e->d_name, "hlog_%llu.hlog", &seq_ull) == 1)
+        int name_end = 0;
+        if (sscanf(e->d_name, "hlog_%llu.hlog%n", &seq_ull, &name_end) == 1 &&
+            name_end > 0 && e->d_name[name_end] == '\0')
         {
             if (log->seg_count < HLOG_MAX_SEGS)
                 log->seqs[log->seg_count++] = (uint64_t)seq_ull;
